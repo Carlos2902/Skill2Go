@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill2Go</title>
+  <!-- You can add links to stylesheets here -->
+</head>
+<body>
+  <header>
+    <h1>Skill2Go</h1>
+    <nav>
+      <ul>
+
+        <a href="{% url 'register' %}">Register</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit">Logout</button>
+      </form>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer>
+    <p>Skill2Go - A platform for exchanging skills</p>
+  </footer>
+</body>
+</html>

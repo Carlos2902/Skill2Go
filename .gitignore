@@ -1,0 +1,18 @@
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment folders
+env/
+venv/
+.env/
+.venv/
+
+# Ignore Django's default file to store SQLite databases (if used)
+db.sqlite3
+
+# Ignore local configuration files (such as Django secret keys or settings)
+.env
+.secret_key
