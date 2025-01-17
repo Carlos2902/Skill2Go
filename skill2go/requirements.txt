@@ -1,0 +1,8 @@
+asgiref==3.8.1
+certifi==2024.8.30
+Django==5.1.4
+django-widget-tweaks==1.5.0
+packaging==24.2
+pillow==11.0.0
+sqlparse==0.5.2
+wheel @ file:///opt/homebrew/Cellar/python%403.12/3.12.7_1/libexec/wheel-0.44.0-py3-none-any.whl#sha256=c01326144883c50263d6967d1145640f3bbc8dfab32c2cbe817ef61d7a810219
