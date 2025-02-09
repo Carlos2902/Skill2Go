@@ -1,9 +1,35 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-  <h2>Welcome, {{ user.username }}</h2>
-  <p>Here is your dashboard</p>
-  <p><a href="{% url 'edit_profile' %}">Edit Profile</a></p>
+
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-5">Your Dashboard</h1>
+
+        <!-- Notifications Section -->
+        <div id="notifications-panel">
+            <h3>Incoming Skill Requests</h3>
+            {% for request in skill_requests %}
+            <div class="notification-card">
+                <p><strong>Requester:</strong> {{ request.requester.username }} is requesting the skill: {{ request.skill.title }}</p>
+                <button 
+                    class="btn btn-success accept-request-btn" 
+                    data-request-id="{{ request.id }}">Accept</button>
+                <button 
+                    class="btn btn-danger accept-request-btn" 
+                    data-request-id="{{ request.id }}">Decline</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>
+
 {% endblock %}
-
-

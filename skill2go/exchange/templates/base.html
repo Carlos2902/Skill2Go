@@ -33,6 +33,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'skill' %}">Skills</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'language' %}">Language</a>
+          </li>
           {% if user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>

@@ -26,25 +26,43 @@
                     <div class="card-body text-center">
                         <h5 class="card-title ">{{ skill.title }}</h5>
                         <p>{{skill.description}}</p>
-                    </div>
+                    </div> 
 
                     <div class="card-footer d-flex align-items-center">
                         <span class="provider-username text-success">
                             <strong>
                                 {% for provider in skill.providers.all %}
-                                {{ provider.user.username }}
+                                <span class="provider" data-provider-id="{{ provider.id }}">{{ provider.user.username }} </span>
                                 {% endfor %}
                             </strong>
                         </span>        
-                        <button class="btn btn-success exchange-btn">Exchange skills!</button>                    
+                        <button class="btn btn-success exchange-btn" data-skill-id="{{ skill.id }}">Exchange skills!</button>
                     </div>
-
                     
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
+<!-- Modal -->
+<div class="modal fade" id="providerModal" tabindex="-1" role="dialog" aria-labelledby="providerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="providerModalLabel">Select a Provider</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="providerList">
+                    <!-- This will be populated dynamically via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     
     {% else %}
         <div class="no-skills-message">
@@ -57,5 +75,6 @@
 
 </body>
 </html>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/skill.js' %}" defer></script>
 {% endblock %}

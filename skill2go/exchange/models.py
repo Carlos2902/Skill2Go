@@ -37,7 +37,7 @@ class Skill(models.Model):
         on_delete=models.CASCADE,
         default=1,  
     )
-    providers = models.ManyToManyField('SkillProvider', blank=True)  # Many-to-many relationship
+    providers = models.ManyToManyField('SkillProvider', blank=True)  # Many to Many relationship with SkillProvider
     image = models.ImageField(upload_to='skill_images/', null=True, blank=True)
     def __str__(self):
         return self.title
@@ -46,11 +46,27 @@ class Skill(models.Model):
     
 class SkillExchange(models.Model):
     requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name="requests")
-    provider = models.ForeignKey(User, on_delete=models.CASCADE, related_name="provides")
+    providers = models.ManyToManyField('SkillProvider', blank=True)  # Many to Many relationship with SkillProvider
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     status = models.CharField(max_length=50, choices=[("Pending", "Pending"), ("Completed", "Completed")])
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 
+class UserPreference(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="preference")
+    preferred_language = models.CharField(max_length=50, choices=[
+        ("es", "Spanish"),
+        ("fr", "French"),
+        ("en", "English"),
+    ])
+    skill_level = models.CharField(max_length=50, choices=[
+        ("beginner", "Beginner"),
+        ("intermediate", "Intermediate"),
+        ("advanced", "Advanced"),
+    ])
+    learning_goals = models.TextField(blank=False, null=False, default = "")
+    
+    def __str__(self):
+        return f"{self.user.username} Preferences"
 

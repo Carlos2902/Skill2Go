@@ -1,4 +1,5 @@
 # ============= imports for User registration ============ 
+import json
 from pyexpat.errors import messages
 from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -18,6 +19,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 # ============= imports for Dashboard   ============ 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+# ============= imports for SkillExchange   ============ 
+from .models import SkillExchange
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 # ============= imports for searching   ============ 
 from .models import Skill
 # ============= imports for homepage   ============ 
@@ -36,9 +42,12 @@ from django.db import transaction
 from django.contrib.auth.mixins import UserPassesTestMixin
 
 
-@login_required  
+@login_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    # Query skill exchanges where the current user is the provider
+    skill_requests = SkillExchange.objects.filter(providers__user=request.user, status="Pending").distinct()
+    
+    return render(request, 'dashboard.html', {'skill_requests': skill_requests})
 
 @login_required
 def profile_view(request):
@@ -87,22 +96,26 @@ class SkillPageView(ListView):
 
 
 class UserRegisterView(UserPassesTestMixin, CreateView):
-    model = User
-    form_class = UserRegistrationForm
-    template_name = 'register.html'
-    success_url = reverse_lazy('edit_profile')
+            model = User
+            form_class = UserRegistrationForm
+            template_name = 'register.html'
+            success_url = reverse_lazy('edit_profile')
 
-    def test_func(self):
-        return not self.request.user.is_authenticated  # Deny access if user is authenticated
 
-    def handle_no_permission(self):
-        return redirect('profile')  # Redirect to profile if user is already logged in
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        user = form.save()
-        login(self.request, user)
-        return response
-    
+            def test_func(self):
+                return not self.request.user.is_authenticated  # Deny access if user is authenticated
+
+            def handle_no_permission(self):
+                return redirect('profile')  # Redirect to profile if user is already logged in
+            def form_valid(self, form):
+                try:
+                    response = super().form_valid(form)
+                    user = form.save()
+                    login(self.request, user)
+                    return response
+                except Exception as e:
+                    return JsonResponse({'error':str(e)}, status=500)
+
     
 class UserLoginView(FormView):
     template_name = 'login.html'
@@ -210,5 +223,127 @@ def add_skill(request):
         return render(request, 'add_skill.html', {'form': form})
 
 
-def edit_about_me(request):
-    return render(request, '404.html')
+
+@csrf_exempt
+def accept_skill_exchange(request, exchange_id):
+    if request.method == 'POST':  # Fix typo
+        exchange = get_object_or_404(SkillExchange, id=exchange_id)
+        
+        if request.user != exchange.requester and not exchange.providers.filter(user=request.user).exists():
+            return JsonResponse({'error': 'You are not authorized to accept this request'}, status=403)
+        
+        exchange.status = "Accepted"  # Update status to Accepted
+        exchange.save()  # Save the change
+        
+        return JsonResponse({'success': True, 'status': exchange.status})  # Fix typo in 'status'
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@login_required
+def create_skill_exchange(request):
+    if request.method == 'POST':
+        try:
+            # Get the skill ID from the POST data
+            data = json.loads(request.body)
+            skill_id = data.get('skill_id')
+            provider_id = data.get('provider_id')
+
+            # Log the skill_id and provider_id for debugging
+            print(f"Received Skill ID: {skill_id} and Provider ID: {provider_id}")
+
+            # Get the skill and provider instances
+            skill = Skill.objects.get(id=skill_id)
+            provider = SkillProvider.objects.get(id=provider_id)
+
+            # Log the skill and provider to check their values
+            print(f"Skill: {skill.title}, Provider: {provider.user.username}")
+
+            exchange = SkillExchange.objects.create(
+                requester=request.user,
+                skill=skill,
+                status="Pending"  # Add status explicitly if it's required
+            )
+
+            # Add the provider to the ManyToManyField
+            exchange.providers.add(provider)
+            exchange.save()  # Save to ensure the relationship is persisted
+            return JsonResponse({'success': True, 'message': 'Skill exchange request created'}, status=201)
+        except Skill.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Skill Not Found'}, status=400)
+        except SkillProvider.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Skill Provider Not Found'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+
+
+
+
+
+def get_skill_providers(request, skill_id):
+    try:
+        skill = Skill.objects.get(id=skill_id)
+        providers = [
+            {
+                'id': provider.id,
+                'username': provider.user.username,
+                'profile_picture_url': provider.user.userprofile.profile_picture.url if provider.user.userprofile.profile_picture else None
+            }
+            for provider in skill.providers.all()
+        ]
+        return JsonResponse({'providers': providers})
+    except Skill.DoesNotExist:
+        return JsonResponse({'error': 'Skill not found'}, status=404)
+    except AttributeError as e:
+        return JsonResponse({'error': f'Attribute error: {str(e)}'}, status=500)
+    
+
+@login_required
+def ai_chat(request):
+
+    user_language = "en" 
+    try:
+        user_preference = UserPreference.objects.get(user=request.user)
+        user_language = user_preference.preferred_language  
+    except UserPreference.DoesNotExist:
+        pass 
+    
+    return render(request, 'ai_chat.html', {'user_language': user_language})
+
+from .models import UserPreference
+from .serializers import UserPreferenceSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def user_preferences(request):
+    if request.method == "GET":
+        preferences, created = UserPreference.objects.get_or_create(user = request.user)
+        serializer = UserPreferenceSerializer(preferences)
+        return Response (serializer.data)
+    
+    elif request.method == "POST":
+        try:
+            preference = request.user.preference
+        except:
+            if UserPreference.DoesNotExist:
+                preference = None
+                
+        if not preference:
+            preference = UserPreference(user=request.user)     
+        serializer = UserPreferenceSerializer(data = request.data, instance = preference)
+        if serializer.is_valid():
+            serializer.save(user = request.user)
+            return Response (serializer.data)
+        else:
+            return Response (serializer.errors, status = 400)
+         
+ 
+@login_required(login_url="/login/")
+def language_preferences(request):
+    return render(request, 'language_preferences.html')
