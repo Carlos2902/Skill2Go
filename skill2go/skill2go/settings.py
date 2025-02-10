@@ -137,3 +137,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 
 LOGIN_REDIRECT_URL = '/dashboard/'  # or reverse_lazy('dashboard') if using reverse
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ]
+}

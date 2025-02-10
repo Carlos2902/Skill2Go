@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const micButton = document.getElementById("mic-button");
     const sendButton = document.querySelector(".chat-input button:last-of-type");
 
-    // Function to display a message in the chat box
+
     function addMessage(sender, text) {
         const message = document.createElement("div");
         message.classList.add(sender);
@@ -13,18 +13,63 @@ document.addEventListener("DOMContentLoaded", function () {
         chatBox.scrollTop = chatBox.scrollHeight;  // Auto-scroll to the latest message
     }
 
+    function fetchTextToSpeech(text){
+        fetch("/api/tts/",{
+            method: "POST",
+            headers:{
+                "Content-Type":"application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({ text: text }) 
+        })
+        .then(response => response.json())
+        .then(data =>{
+            if (data.audio){
+                const audioBlob = new Blob([data.audio], {type: 'audio/wav'});
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            }else {
+                console.error("TTS response error:", data);
+            }
+        })
+        .catch(error => console.error("Error fetching TTS:", error));
+    }
+
+    // requesting AI greeting when first time visitng the ai chat
+    function fetchGreeting() {
+        fetch("/api/chat/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({ message: "__GREETING__" })  
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.response) {
+                addMessage("ai", data.response);
+                fetchTextToSpeech(data.response); // Speak greeting if enabled
+            } else {
+                console.error("AI response error:", data);
+            }
+        })
+        .catch(error => console.error("Error fetching AI greeting:", error));
+    }
+
     // Function to send the user message to the backend API
     function sendMessage() {
         const message = userInput.value.trim();
-        if (!message) return;  // Ignore empty messages
+        if (!message) return;  
 
-        addMessage("user", message);  // Display user message
+        addMessage("user", message);  
 
         fetch("/api/chat/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": getCookie("csrftoken"),  
+                "X-CSRFToken": getCookie("csrftoken"),
             },
             body: JSON.stringify({ message: message })
         })
@@ -33,11 +78,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.error) {
                 addMessage("ai", "Oops! Something went wrong.");
             } else if (data.response) { // Check for the 'response' property
-                addMessage("ai", data.response); // Display the actual text from data.response
-                speakText(data.response); // Pass data.response to speakText
+                addMessage("ai", data.response);
+                fetchTextToSpeech(data.response); // Speak response
             } else {
-              console.error("Unexpected response:", data); // Log the whole data object
-              addMessage("ai", "Unexpected response from AI.");
+                console.error("Unexpected response:", data);
+                addMessage("ai", "Unexpected response from AI.");
             }
         })
         .catch(error => {
@@ -48,11 +93,6 @@ document.addEventListener("DOMContentLoaded", function () {
         userInput.value = "";  // Clear input field
     }
 
-    // Function to convert AI text response into speech
-    function speakText(text) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        speechSynthesis.speak(utterance);
-    }
 
     // Capture text input via Enter key
     userInput.addEventListener("keypress", function (event) {
@@ -92,5 +132,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return cookieValue;
     }
 
+    // Fetch AI greeting when the page loads
+    fetchGreeting();
 });
-
