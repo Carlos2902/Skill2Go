@@ -1,6 +1,6 @@
 # Skill2Go
 
-**Video Demo:** [https://youtu.be/9bGJ2Xa_QWs](https://youtu.be/9bGJ2Xa_QWs) (Replace with the actual link if available)
+**Video Demo:** (https://youtu.be/AS7r_lhPPeQ) 
 
 Skill2Go is a Django-based web application that facilitates skill-sharing and skill-learning.  It connects users who are offering specific skills with those seeking to learn them.  ***Skill2Go also helps users improve their daily conversational skills in French, English, or Spanish.***  The platform aims to build a community where individuals can share knowledge, acquire new skills, and grow both professionally and personally.
 
@@ -17,7 +17,7 @@ Skill2Go's primary goal is to create a collaborative environment where users can
 
 ## Tech Stack
 
-* Django
+* Django rest framework
 * Python
 * SQLite
 * HTML/CSS/JavaScript
@@ -25,8 +25,8 @@ Skill2Go's primary goal is to create a collaborative environment where users can
 
 ## AI Models
 
-* Mixtral-8x7B-Instruct-v0.1
-* Kokoro
+* Mixtral-8x7B-Instruct-v0.1: https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1
+* Kokoro: https://huggingface.co/hexgrad/Kokoro-82M
 
 ## Setup Instructions
 
@@ -70,20 +70,23 @@ HUGGINGFACE_API_KEY = YOURCREDENTIALS
 For multi-language support, install espeak-ng using Homebrew:
 ```bash
 brew install espeak-ng for mac
-````
+```
 
-### 5. Migrate the Database
+### 6. Apply migrations: 
 -Load the initial data to populate skill categories and sample records:  `sqlite3 db.sqlite3 < data-sqlite3.sql` 
 -Apply the migrations:  `python manage.py makemigrations` 
 -Migrate the database schema:  `python manage.py migrate` 
 
-### 6. Create a superuser
-To access the Django admin panel, create a superuser account:
-```bash
-   python manage.py createsuperuser
-```
+### 6. Register in the app
+Create an account (since using the django model, your password must be):
+✅Minimum length: At least 8-12 characters
+✅ A mix of uppercase, lowercase, numbers, and symbols
+✅ Do not use easy-to-guess passwords (e.g., password123)
+
+OR just use a password manager: For auto-generated secure passwords
+
 ### 6. Start the Server
 -Run python manage.py runserver
--Go to http://127.0.0.1:8000/, click on the sign-up button,create and account and then log in.
+-Go to http://127.0.0.1:8000/ and then log in.
 -Have fun
 

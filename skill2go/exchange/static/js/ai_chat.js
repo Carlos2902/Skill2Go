@@ -4,16 +4,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const micButton = document.getElementById("mic-button");
     const sendButton = document.querySelector(".chat-input button:last-of-type");
     let preferredLanguage = "en"; 
-    // Function to add a message to the chat box
     function addMessage(sender, text) {
         const message = document.createElement("div");
         message.classList.add("chat-message", `${sender}-message`);
         message.innerText = text;
         chatBox.appendChild(message);
-        chatBox.scrollTop = chatBox.scrollHeight;  // Auto-scroll to the latest message
+        chatBox.scrollTop = chatBox.scrollHeight;  
     }
 
-    // Function to fetch Text-to-Speech audio
+
     function fetchTextToSpeech(text) {
         fetch("/api/tts/", {
             method: "POST",
@@ -38,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error fetching TTS:", error));
     }
 
-    // Request AI greeting when first visiting the AI chat
+
     function fetchGreeting() {
         fetch("/api/chat/", {
             method: "POST",
@@ -54,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 addMessage("ai", data.response);
                 preferredLanguage = data.preferred_language; 
                 console.log(preferredLanguage) 
-                fetchTextToSpeech(data.response);  // Speak greeting if enabled
+                fetchTextToSpeech(data.response);  
             } else {
                 console.error("AI response error:", data);
             }
@@ -62,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error fetching AI greeting:", error));
     }
 
-    // Function to send the user's message to the backend API
+    // send the user's message to the backend API
     function sendMessage() {
         const message = userInput.value.trim();
         if (!message) return;
@@ -104,18 +103,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Send button click event
     sendButton.addEventListener("click", sendMessage);
 
-    // Microphone button click event (Speech-to-Text)
+
     micButton.addEventListener("click", function () {
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = preferredLanguage;  // Use the preferred language dynamically set by the backend
+        recognition.lang = preferredLanguage;  // preferred language dynamically set by the backend
     
         recognition.onresult = function (event) {
             const transcript = event.results[0][0].transcript;
             userInput.value = transcript;
-            sendMessage();  // Automatically send after speech recognition
+            sendMessage(); 
         };
     
         recognition.onerror = function (event) {
@@ -126,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     
 
-    // Function to get CSRF token (required for Django)
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== "") {
@@ -140,6 +138,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return cookieValue;
     }
 
-    // Fetch AI greeting when the page loads
+    // AI greeting when the page loads
     fetchGreeting();
 });

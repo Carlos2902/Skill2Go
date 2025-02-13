@@ -19,37 +19,32 @@ import tempfile
 import base64
 from IPython.display import display, Audio
 import re
+import numpy as np
 
-# kokoro pipeline
-# def initializing_pipeline(user):
-#     user_preference = UserPreference.objects.get(user=user)
-#     language_preference_key = user_preference.preferred_language
 
-#     preferred_language = map_language_code(language_preference_key)
-#     try:
-#         pipeline = KPipeline(lang_code=preferred_language)  # Initialize pipeline dynamically
-#     except Exception as e:
-#         print(f'An error has occurred in the kokoro pipeline: {e}')
-#         raise
+# kokoro pipeline (language dynamycally set it up)
+def initializing_pipeline(user):
+    user_preference = UserPreference.objects.get(user=user)
+    language_preference_key = user_preference.preferred_language
+
+    preferred_language = map_language_code(language_preference_key)
+    try:
+        pipeline = KPipeline(lang_code=preferred_language)  
+    except Exception as e:
+        print(f'An error has occurred in the kokoro pipeline: {e}')
+        raise
     
-#     return pipeline
-# def map_language_code(language_code): 
-#     language_map = {
-#         "es": "e",
-#         "fr": "f",
-#         "en": "a",
-#     }
-#     return language_map.get(language_code, "a")  
-
-
-
-# todo: refine the prompt, remember the ai the underlying mechanism or keeping everything as a conversation
-
-
+    return pipeline
+def map_language_code(language_code): 
+    language_map = {
+        "es": "e",
+        "fr": "f",
+        "en": "a",
+    }
+    return language_map.get(language_code, "a")  
 
 load_dotenv()
 HUGGINGFACE_API_KEY = os.getenv('HUGGINGFACE_API_KEY')
-# function for the prompt based on user's preferences
 def construct_prompt(user, greeting=False, user_input=None):
     try:
         user_preference = UserPreference.objects.get(user=user)
@@ -64,16 +59,14 @@ def construct_prompt(user, greeting=False, user_input=None):
         skill_level = user_preference.skill_level
         learning_goals = user_preference.learning_goals
 
-       # For greeting interactions
         if greeting:
             prompt = (
-                f"The user speaks {preferred_language}. "
+                "You are an AI language teacher which name is Emma."
+                f"The user speaks {preferred_language}. Don't speak any other language."
                 f"They are a {skill_level} learner and their goal is to {learning_goals}. "
-                f"Start the conversation by greeting the user in {preferred_language} and asking for their name. "
-                f"Ensure the conversation stays in {preferred_language}"
+                f"Start the conversation by greeting the user in {preferred_language} and asking for their name."
+                
             )
-
-        # For regular messages
         else:
             prompt = (
                 f"Focus only on the user's input: '{user_input}'. "
@@ -83,7 +76,7 @@ def construct_prompt(user, greeting=False, user_input=None):
 
         return prompt, preferred_language
     except UserPreference.DoesNotExist:
-        return "User preferences are missing.", "English"  # Default to English if no preferences
+        return "User preferences are missing.", "English"  
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -137,53 +130,64 @@ class AIChatView(APIView):
 
 
 
-# @method_decorator(csrf_exempt, name='dispatch')
-# class TextToSpeechView(APIView):
-#     def post(self, request):
-#         text = request.data.get('text', '')
-#         user = request.user
-#         preference = UserPreference.objects.get(user=user)
-#         language = preference.preferred_language
-#         print("Extracted text:", text)
-        
-#         if not text:
-#             return Response({'error': 'No text provided'}, status=status.HTTP_400_BAD_REQUEST)
-#         try:
-#             pipeline = initializing_pipeline(user)
-#             generator = pipeline(text, voice="af_heart", speed=1, split_pattern=r'(?<=[.!?])\s*')
-            
-#             segment_list = list(generator)
-#             if not segment_list:
-#                 return JsonResponse({"error": "No audio segments produced"}, status=400)
-            
-#             gs, ps, audio = segment_list[0]
-#             print("Graphemes:", gs)
-#             print("Phonemes:", ps)
-            
-#             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_audio_file:
-#                 audio_filename = temp_audio_file.name
-#                 sf.write(audio_filename, audio, 24000)
+@method_decorator(csrf_exempt, name='dispatch')
+class TextToSpeechView(APIView):
+    def post(self, request):
+        text = request.data.get('text', '')
+        user = request.user
+        try:
+            preference = UserPreference.objects.get(user=user)
+            language = preference.preferred_language
+        except UserPreference.DoesNotExist:
+            return Response({'error': 'User preference not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-#             with open(audio_filename, "rb") as f:
-#                 audio_bytes = f.read()
-#             audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-#             os.remove(audio_filename)
-#             return Response({'audio': audio_base64}, status=status.HTTP_200_OK)
+        print("Extracted text:", text)
 
-#         except TypeError as e:
-#             return JsonResponse({"error": "Invalid phonemes input format"}, status=400)
-#         except Exception as e:
-#             return JsonResponse({"error": "Internal Server Error"}, status=500)
-        
-#     def prepare_kokoro_input(text):
-#         try:
-#                 words = text.split()
-#                 phoneme_lists = [list(word) for word in words]
-#                 from itertools import chain
-#                 flat_phonemes = list(chain.from_iterable(phoneme_lists))
-#                 kokoro_input = "".join(flat_phonemes)
-#                 print("Final Kokoro input:", kokoro_input)
-#                 return kokoro_input
-#         except Exception as e:
-#                 print(f"Error preparing Kokoro input: {e}")
-#                 return None
+        if not text:
+            return Response({'error': 'No text provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            pipeline = initializing_pipeline(user)
+            generator = pipeline(text, voice="af_heart", speed=1, split_pattern=None)
+            segment_list = list(generator)
+            print(f"Total segments: {len(segment_list)}")
+
+            if not segment_list:
+                return JsonResponse({"error": "No audio segments produced"}, status=400)
+            audio_data = []
+            for gs, ps, audio in segment_list:
+                print("Graphemes:", gs)
+                print("Phonemes:", ps)
+                audio_data.append(audio)
+            full_audio = np.concatenate(audio_data)
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_audio_file:
+                audio_filename = temp_audio_file.name
+                sf.write(audio_filename, full_audio, 24000)
+
+
+            with open(audio_filename, "rb") as f:
+                audio_bytes = f.read()
+            audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+            os.remove(audio_filename)
+
+            return Response({'audio': audio_base64}, status=status.HTTP_200_OK)
+
+        except TypeError as e:
+            print(f"TypeError: {e}")
+            return JsonResponse({"error": "Invalid phonemes input format"}, status=400)
+        except Exception as e:
+            print(f"Exception: {e}")
+            return JsonResponse({"error": "Internal Server Error"}, status=500)
+
+    def prepare_kokoro_input(text):
+        try:
+            words = text.split()
+            phoneme_lists = [list(word) for word in words]
+            from itertools import chain
+            flat_phonemes = list(chain.from_iterable(phoneme_lists))
+            kokoro_input = "".join(flat_phonemes)
+            print("Final Kokoro input:", kokoro_input)
+            return kokoro_input
+        except Exception as e:
+            print(f"Error preparing Kokoro input: {e}")
+            return None
