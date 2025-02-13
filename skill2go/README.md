@@ -1,41 +1,40 @@
-#  Skill2Go
-## Video : https://youtu.be/9bGJ2Xa_QWs
-Skill2Go is a web application developed with Django that serves as a platform for skill-sharing. It enables users to connect with others who are offering or seeking specific skills, such as coding, design, or language learning. By facilitating skill exchange, Skill2Go aims to create a unique community where people can share their knowledge, learn new skills, and grow professionally and personally.
+# Skill2Go
 
-The platform allows users to create profiles, list skills they are willing to offer, and engage with others who may be looking for specific expertise. It also features an admin dashboard for managing users, skills, and content on the site. With an emphasis on easy discovery, skills can be categorized, tagged, and rated by users after each exchange.
+**Video Demo:** [https://youtu.be/9bGJ2Xa_QWs](https://youtu.be/9bGJ2Xa_QWs) (Replace with the actual link if available)
+
+Skill2Go is a Django-based web application that facilitates skill-sharing and skill-learning.  It connects users who are offering specific skills with those seeking to learn them.  ***Skill2Go also helps users improve their daily conversational skills in French, English, or Spanish.***  The platform aims to build a community where individuals can share knowledge, acquire new skills, and grow both professionally and personally.
 
 ## Purpose
-The primary goal of Skill2Go is to create a collaborative environment where users can offer and learn new skills without barriers. Whether you're an experienced professional or someone looking to learn something new, Skill2Go allows you to engage with a community that shares your interest in personal and professional development.
+
+Skill2Go's primary goal is to create a collaborative environment where users can seamlessly offer and learn skills, breaking down traditional barriers to education and knowledge sharing.
 
 ## Key Features
-1. User Profiles: Users can create and manage personal profiles, showcasing their expertise, skills, and experiences. Profiles help users build credibility and connect with others who are interested in their offerings.
 
-
-
-2.Skill Listings: Users can list the skills they are offering along with detailed descriptions. Each skill can also have media such as images or videos attached (to be implemented)to give others a better understanding of what is being shared.
-
-3.Admin Dashboard: Admins have access to a dedicated dashboard to manage and oversee user activities, skill offerings, and platform content. This feature allows for easier moderation and content control.
-
-4.User Feedback & Ratings (to be implemented): After each skill exchange, users can rate the session and provide feedback, ensuring the quality of interactions on the platform. This system helps build trust among users and enhances the learning experience.
-
-5. Categories & Tags: Skills are categorized by type and tagged for better discoverability. This makes it easier for users to find the skills they need, improving the overall user experience and engagement.
-
-6. Skill Matching: The platform provides matching features based on user profiles, making it easier for users to find the skills they are looking for. This feature helps to optimize user engagement and promotes skill-sharing among relevant parties.
-
-7. Implement an AI-based conversational assistant to help users practice languages and get real-time advice or feedback.
+* **User Profiles:** Users can create and manage profiles showcasing their expertise, skills, and experience.  Profiles enhance credibility and facilitate connections with others who share similar interests.
+* **Skill Listings:** Users can list the skills they offer, providing detailed descriptions.  Future implementations will include the ability to attach media like images or videos to further illustrate the skills being shared.
+* **Admin Dashboard:**  A dedicated admin dashboard allows administrators to manage user activities, skill offerings, and platform content, ensuring easy moderation and content control.
+* **AI-Powered Conversational Assistant:**  An AI assistant helps users practice languages, providing real-time advice and feedback.
 
 ## Tech Stack
-1. Django
-2. Python
-3. SQLite
-4. HTML/CSS/JavaScript
-5. Bootstrap
 
+* Django
+* Python
+* SQLite
+* HTML/CSS/JavaScript
+* Bootstrap
 
-Steps to set up the project:
-### 1. Create a virtual environment and activate it
-- Open the extracted folder in **VS Code**.
-- In the terminal, create the virtual environment:
+## AI Models
+
+* Mixtral-8x7B-Instruct-v0.1
+* Kokoro
+
+## Setup Instructions
+
+### 1. Set up the Virtual Environment
+
+1. Open the extracted project folder in VS Code.
+2. Open the terminal.
+3. Create a virtual environment:
    ```bash
    python -m venv env
    ```
@@ -62,9 +61,16 @@ MOve to the `core` directory where the `manage.py` file is located:
 cd skill2go/
 ```
 
-### 5. Create an .env file for the hugging face credentials
-
-
+### 4. Configure Hugging Face API Key
+Create a .env file in the skill2go directory and add your Hugging Face API key:
+```bash
+HUGGINGFACE_API_KEY = YOURCREDENTIALS
+```
+### 5. Install espeak-ng (macOS): 
+For multi-language support, install espeak-ng using Homebrew:
+```bash
+brew install espeak-ng for mac
+````
 
 ### 5. Migrate the Database
 -Load the initial data to populate skill categories and sample records:  `sqlite3 db.sqlite3 < data-sqlite3.sql` 
@@ -79,4 +85,5 @@ To access the Django admin panel, create a superuser account:
 ### 6. Start the Server
 -Run python manage.py runserver
 -Go to http://127.0.0.1:8000/, click on the sign-up button,create and account and then log in.
+-Have fun
 
