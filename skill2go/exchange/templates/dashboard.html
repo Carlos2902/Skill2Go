@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center my-5">Your Dashboard</h1>
+        <div id="notifications-panel" class="text-center">
+            {% if skill_requests %}
+            <h3 class="mb-4 p-3 bg-light rounded shadow">Incoming Skill Requests</h3>
+            {% for request in skill_requests %}
+                <div class="notification-card card p-4 mb-3 shadow-lg rounded">
+                    <p><strong>Requester:</strong> {{ request.requester.username }} is requesting the skill: <strong>{{ request.skill.title }}</strong></p>
+                    
+                    <div class="d-flex justify-content-center gap-3 mt-3">
+                        <button class="btn btn-success accept-request-btn" data-request-id="{{ request.id }}">Accept</button>
+                        <button class="btn btn-danger decline-request-btn" data-request-id="{{ request.id }}">Decline</button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-requests p-4 bg-light rounded shadow">
+                <p class="text-muted">No incoming skill exchange requests for the moment.</p>
+            </div>
+        {% endif %}
+    </div>
+        </div>
+
+        <div id="skill-preference-form" class="container mt-5 text-center">
+            <h3>Tell us about your skill preferences</h3>
+            <form id="preferenceForm">
+                <div class="form-step active" id="slide-1">
+                    <label class="d-block">What type of skills do you prefer?</label>
+                    <select id="skillType" required >
+                        <option value="outdoors_sports"> 🚵‍♂️ Outdoors and Sports</option>
+                        <option value="indoor_competitive"> 🎮 Indoor Competitive Hobby</option>
+                        <option value="outdoor_observation"> 🏄‍♀️ Outdoor Observation Hobby</option>
+                        <option value="indoor_observation"> 🧘‍♂️ Indoor Observation Hobby</option>
+                    </select>
+                    <button type="button" class="next-step btn btn-primary">Next</button>
+                </div>
+
+                <div class="form-step" id="slide-2">
+                    <label>How often are you willing to do this skill?</label>
+                    <select id="frequency" required>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="biweekly">Biweekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="occasionally">Occasionally</option>
+                    </select>
+                    <button type="button" class="prev-step btn btn-danger">Back</button>
+                    <button type="button" class="next-step btn btn-primary">Next</button>
+                </div>
+
+                <div class="form-step" id="slide-3">
+                    <label>Which kind of personality best describes you?</label>
+                    <select id="personality" required>
+                        <option value="introvert">👨‍💻 Introvert</option>
+                        <option value="extrovert">🧑‍🚀 Extrovert</option>
+                        <option value="ambivert">🧙‍♂️ Ambivert</option>
+                        <option value="adventurous">🦸 Adventurous</option>
+                        <option value="analytical">🕵️ Analytical</option>
+                    </select>
+                    <button type="button" class="prev-step btn btn-danger">Back</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="personalized-posts" class="hidden mt-5">
+            <h3>Recommended Skills to learn🥸</h3>
+            <div id="posts-container">
+                <p>Loading personalized recommendations...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>
+
+{% endblock %}

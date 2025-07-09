@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+
+</head>
+
+<body>
+  <section class="container hero-section">
+    <div class="text-content">
+      <h1>Exchange Skills, Empower Growth</h1>
+      <p>Connect with like-minded individuals, learn from experts, and share your unique talents to unlock limitless opportunities for personal and professional success.</p>
+      <a href="{% url 'register' %}"> <button class="cta-btn" >Join For Free</button></a>
+    </div>
+
+
+    <div class="image-wrapper">
+      <div class="dark-circle"></div>
+      <img src="{% static 'assets/woman_computer.png' %}" alt="Skill User Image" class="img-fluid">
+      <div class="ui-class-card">
+        <img src="{% static 'assets/conversation.jpg' %}" alt="Skill Image">
+        <div>
+          <h6 class="mb-0">Conversational French</h6>
+          <small>Today at 08:00 PM</small>
+        </div>
+        <a href="{% url 'ai_chat' %}"><button class="join-now-btn ms-3">Join Now</button></a>
+      </div>
+    </div>
+  </section>
+
+
+
+
+    
+  <section class="learning-section">
+    <h2>More than just a Skill</h2>
+    <p>Our platform empowers you to grow beyond traditional learning by connecting with experts, exchanging skills, and gaining real-world experience through interactive courses and collaborative opportunities in real life.</p>
+  
+    <div class="row justify-content-center">
+      <!-- Card 1 -->
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="learning-card text-center">
+          <img src="https://via.placeholder.com/60" alt="Expert Training Icon">
+          <h4>Learn from Industry Experts</h4>
+          <p>Gain hands-on skills and insights from seasoned professionals who share real-world knowledge to boost your expertise.</p>
+          <a href="#">Learn More</a>
+        </div>
+      </div>
+  
+      <!-- Card 2 -->
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="learning-card text-center">
+          <img src="https://via.placeholder.com/60" alt="Courses Icon">
+          <h4>1,500+ Video Tutorials</h4>
+          <p>Access a vast library of skill-focused courses covering a wide range of topics, designed to help you master new abilities.</p>
+          <a href="#">Learn More</a>
+        </div>
+      </div>
+  
+      <!-- Card 3 -->
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="learning-card text-center">
+          <img src="https://via.placeholder.com/60" alt="Updates Icon">
+          <h4>Continuous Skill Updates</h4>
+          <p>Stay ahead with regularly updated content, ensuring you're always learning the latest trends and best practices.</p>
+          <a href="#">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+</body>
+
+</html>
+
+{% endblock %}
+
+

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Verify Your Skill: {{ skill.title }}</h2>
+    <p>Upload a document to verify this skill. Accepted formats: PDF, JPG, PNG.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.skill }}
+        
+        <div class="mb-3">
+            <label for="id_document" class="form-label">Upload Certification</label>
+            {{ form.document|add_class:"form-control" }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Submit for Verification</button>
+        <a href="{% url 'manage_skills' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

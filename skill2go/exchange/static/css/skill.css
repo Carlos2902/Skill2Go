@@ -1,0 +1,66 @@
+body {
+    background-image: linear-gradient(135deg, #92FFC0 10%, #002661 100%);
+    margin: 0;
+}
+
+.skill-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+    position: relative;
+    overflow: hidden;
+    height: 180px;
+    clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 90%);
+}
+
+.skill-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.category-badge {
+    background-color: #d4f5e9;
+    color: #28a745;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.card-footer {
+    position: relative; 
+    background-color: #f8f9fa; 
+    font-size: 0.9rem; 
+    padding: 20px; 
+    height: 60px; 
+}
+
+.provider-username {
+    position: absolute; 
+    bottom: 10px; 
+    left: 10px; 
+}
+
+.exchange-btn {
+    position: absolute; 
+    bottom: 10px; 
+    right: 10px;
+    padding: 0.5rem 1rem; 
+}

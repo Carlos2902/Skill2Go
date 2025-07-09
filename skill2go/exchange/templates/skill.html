@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<head>
+    <title>Skills</title>
+    <link rel="stylesheet" href="{% static 'css/skill.css' %}">
+</head>
+<body>
+    {% if skills %}
+    <div class="container">
+        <h1 class="text-center my-5">Most Popular Courses</h1>
+        <a href="{% url 'add_skill' %}" class="add-skill-link">Click to add a skill</a>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+            {% for skill in skills %}
+            <div class="col">
+                <div class="card skill-card h-100 shadow">
+                    <div class="image-container">
+                        <img src="{{ skill.image.url }}" alt="{{ skill.title }}" class="card-img-top skill-image">
+                    </div>
+                    <div class="card-body text-left">
+                        <span class="badge category-badge">{{ skill.category.name }}</span>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title ">{{ skill.title }}</h5>
+                        <p>{{skill.description}}</p>
+                    </div> 
+
+                    <div class="card-footer d-flex align-items-center">
+                        <span class="provider-username text-success">
+                            <strong>
+                                {% for provider in skill.providers.all %}
+                                <span class="provider" data-provider-id="{{ provider.id }}">{{ provider.user.username }} </span>
+                                {% endfor %}
+                            </strong>
+                        </span>        
+                        <button class="btn btn-success exchange-btn" data-skill-id="{{ skill.id }}">Exchange skills!</button>
+                    </div>
+                    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+<!-- Modal -->
+<div class="modal fade" id="providerModal" tabindex="-1" role="dialog" aria-labelledby="providerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="providerModalLabel">Select a Provider</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="providerList">
+                    <!-- JS population -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    {% else %}
+        <div class="no-skills-message">
+            <p>No skills available with assigned providers. Add a skill now!</p>
+            <a href="{% url 'add_skill' %}" class="add-skill-link">Click to add a skill</a>
+        </div>
+    {% endif %}
+    
+
+
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/skill.js' %}" defer></script>
+{% endblock %}

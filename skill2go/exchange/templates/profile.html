@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css'%}">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Cover and Profile Header -->
+                <div class="card mb-4 position-relative" style="padding-bottom: 60px;">
+                    <div class="position-relative" style="padding-bottom: 10px; height: 250px; overflow: hidden;">
+                        <img 
+                            src="{{ user.userprofile.cover_page.url }}" 
+                            alt="Cover Photo" 
+                            class="w-100 h-100 rounded" 
+                            style="object-fit: none;">
+                    </div>
+                    
+                    <div class="profile-header position-relative">                            
+                        <img src="{{ user.userprofile.profile_picture.url }}" 
+                             alt="Profile Picture" 
+                             class="profile-picture rounded-circle shadow-4-strong border border-white border-5 shadow-lg position-absolute" 
+                             style="top: 10%; left: 15%; transform: translate(-50%, -60%); width: 150px; height: 150px; object-fit: cover;">
+
+                    
+                        <div class="profile-info" style="margin-left: 29%;">
+                            <h3 class="card-titlep">{{ user.username }}</h3>
+                            <p class="text-muted">{{ user.userprofile.location }}</p>
+                            <div>
+                                {% for skill in skills %}
+                            <span class="badge category-badge">{{ skill.title }}</span>
+                        {% empty %}
+                            <span>No skills listed yet</span>
+                        {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- About Me Section -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>About Me</h5>
+                        <a href="{% url 'edit_profile' %}" class="text-decoration-none">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ user.userprofile.about_me|default:"No description provided yet." }}</p>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-lg-4">
+                <!-- Contact Details -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Contact</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            {% if user.userprofile.linkedin %}
+                            <li><a href="{{ user.userprofile.linkedin }}" target="_blank"><i class="bi bi-linkedin"></i> LinkedIn</a></li>
+                            {% endif %}
+                            {% if user.userprofile.facebook %}
+                            <li><a href="{{ user.userprofile.facebook }}" target="_blank"><i class="bi bi-facebook"></i> Facebook</a></li>
+                            {% endif %}
+                            {% if user.userprofile.instagram %}
+                            <li><a href="{{ user.userprofile.instagram }}" target="_blank"><i class="bi bi-instagram"></i> Instagram</a></li>
+                            {% endif %}
+                            <li><i class="bi bi-envelope"></i> {{ user.email }}</li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- Similar Profiles Section -->   
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Similar Profiles</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            {% for profile in similar_profiles %}
+                            <li class="d-flex align-items-center mb-3">
+                                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                                <a href="{% url 'profile' profile.user.id %}" class="text-decoration-none">
+                                    {{ profile.user.username }}
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li>No similar profiles found.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

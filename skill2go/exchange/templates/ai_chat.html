@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+
+    <link rel="stylesheet" href="{% static 'css/ai_chat.css' %}">
+</head>
+<body>
+    <div class="chat-window">
+        <div class="chat-box" id="chat-box">
+            <!-- Chat messages-->
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Say something..." />
+            <button id="mic-button">🎤</button>
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script src="{% static 'js/ai_chat.js' %}"></script>
+</body>
+{% endblock %}

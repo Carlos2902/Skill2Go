@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<head>
+  <link rel="stylesheet" href="{% static 'css/edit_profile.css' %}">
+</head>
+
+<div class="parent container d-flex justify-content-center align-items-center h-100">
+  <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">
+          <h4>Edit profile</h4>
+      </div>
+      <div class="card-body">
+          <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <div class="d-flex justify-content-end gap-2 mt-3">
+                  <button type="reset" class="btn btn-secondary">Discard</button>
+                  <button type="submit" class="btn btn-success">Save</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+<script src="{% static 'js/profile_script.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,132 @@
+.register-container {
+  display: flex;
+  padding: 2rem;
+  width: 100%;
+  height: 100vh; 
+  box-sizing: border-box; 
+}
+body{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-image: linear-gradient(135deg, #92FFC0 10%, #002661 100%);
+}
+.image-section {
+  flex: 1;
+  background: linear-gradient(
+    to bottom, 
+    #52d480 0%, 
+    #e7f8ed 50%, 
+      #ffffff 60%, 
+      #ffffff 100% 
+  );
+margin: 0;  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-section img {
+  max-width: 80%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.form-section {
+  flex: 1;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  background: #ffffff;
+}
+
+.register-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 1rem;
+  text-align: center; 
+}
+
+.register-subtitle {
+  font-size: 1rem;
+  color: #777;
+  margin-bottom: 2rem;
+  text-align: center; 
+}
+
+.register-input {
+  padding: 0.8rem;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.3s ease-in-out;
+  width: 100%; 
+  margin-bottom: 1.5rem; 
+}
+
+.register-input:focus {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1),
+    0 0 10px rgba(123, 123, 255, 0.4);
+}
+
+.register-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #f9f9f9;
+  border: 2px solid #aaa;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-right: 0.5rem; 
+}
+
+.register-checkbox:checked {
+  background: #4caf50;
+  border-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-checkbox:checked::after {
+  content: '✔';
+  color: white;
+  font-size: 0.9rem;
+}
+
+.register-submit-btn {
+  background: black;
+  color: white;
+  font-size: 1rem;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  margin: 1.5rem auto 0 auto; 
+  display: block;
+  width: 60%; 
+}
+
+.register-submit-btn:hover {
+  background: #333;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem; 
+}
+
+.form-section p {
+  margin-top: auto; 
+  text-align: center;
+  font-size: 0.9rem;
+  color: #777;
+}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Your Skills</h2>
+    {% if skills %}
+        {% for skill in skills %}
+            <div class="d-flex justify-content-between align-items-center border p-3 mb-2">
+                <div>
+                    <h5>{{ skill.title }}</h5>
+                    <p>{{ skill.description }}</p>
+                </div>
+                <div>
+                    {% with certification=skill.certifications.first %}  {# Get the first certification record for this skill #}
+                        {% if skill.is_verified %}
+                            <span class="badge bg-success">Verified ✅</span>
+                            <br>
+                            {% if certification.blockchain_tx %}
+                                <small>Blockchain TX: <code>{{ certification.blockchain_tx|slice:":10" }}...</code></small>
+                                <br>
+                                <a href="https://etherscan.io/tx/{{ certification.blockchain_tx }}" target="_blank" class="btn btn-sm btn-outline-primary">View on Explorer</a>
+                            {% endif %}
+                        {% elif certification and certification.status == "Pending" %}
+                            <span class="badge bg-warning text-dark">Pending ⏳</span>
+                        {% else %}
+                            <a href="{% url 'verify_skill' skill.id %}" class="btn btn-warning">
+                                Verify Your Skill
+                            </a>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You haven't added any skills yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

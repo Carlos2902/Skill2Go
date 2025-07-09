@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log-in</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+  
+</body>
+  <div class="login-container">
+
+    
+    <div class="form-section">
+      <h2 class="login-title">Login</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          {{form.username|add_class:"form-control login-input"|attr:"placeholder:Enter your username"}}
+        </div>
+  
+        <div class="form-group">
+          {{form.password|add_class:"form-control login-input"|attr:"placeholder:Enter your password"}}
+        </div>
+  
+  
+        <button type="submit" class="btn btn-dark login-submit-btn">Log-in</button>
+      </form>
+
+      <p>Don't have an account? Create one <a href="{% url 'register' %}">Register</a></p>
+    </div>
+  </div>
+
+{% endblock %}
+
+
+

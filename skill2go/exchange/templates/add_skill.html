@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'css/add_skill.css' %}">
+</head>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">Add a Skill</h4>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{% url 'add_skill' %}" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_title" class="form-label">Skill Title</label>
+              {{ form.title|add_class:"form-select" }}
+            </div>
+            <div id="custom-skill-field" class="mb-3">
+              <label for="id_custom_title" class="form-label">Not found your skill?</label>
+              {{ form.custom_title|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+              <label for="id_category" class="form-label">Category</label>
+              {{ form.category|add_class:"form-select" }}
+            </div>
+            <div class="mb-3 ">
+              <label for="id_description" class="form-label">Description</label>
+              {{ form.description|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+              <label for="id_image" class="form-label">Skill Image</label>
+              <div id="drop-area" class="border border-dashed p-3 text-center" style="border-radius: 10px;">
+                <p>Drag and drop image files to upload</p>
+                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('id_image').click()">Select Image</button>
+                {{ form.image|add_class:"form-control d-none" }}
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-secondary">Discard</button>
+              <button type="submit" class="btn btn-success">Submit</button>
+              {% if skill.id %}
+        <a href="{% url 'verify_skill' skill.id %}" class="btn btn-warning">
+            Verify Your Skill
+        </a>
+    {% else %}
+        <a href="#" class="btn btn-warning disabled">Verify Your Skill</a>
+    {% endif %}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-7">
+      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="{% static 'assets/pottery_group.jpg' %}" class="img-fluid w-100" alt="First Slide">
+            <div class="carousel-caption">
+              <p>“Such a fun and unique way to learn and share skills! I taught someone basic photography and, in return, got a crash course in baking artisan bread. The whole process was easy, and I’ve met some amazing people along the way!.”</p>
+              <small>– Ellie Simpson, Photographer</small>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'assets/hiking_group.jpg' %}" class="img-fluid w-100" alt="Second Slide">
+            <div class="carousel-caption">
+              <p>"I absolutely love this platform! I exchanged my graphic design skills for guitar lessons — it was an awesome experience, and I feel like I got so much more out of it than a traditional class. Highly recommend it for anyone who enjoys learning in a collaborative way.”</p>
+              <small>– John Smith, Graphic Designer</small>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'assets/yoga_group.jpg' %}" class="img-fluid w-100" alt="Third Slide">
+            <div class="carousel-caption">
+              <p>“A fantastic community of talented people! I offered my language tutoring services and learned yoga basics from someone else. It’s like bartering, but for knowledge — and it’s incredibly rewarding. I can’t wait for my next exchange!”</p>
+              <small>– Jane Doe, Language Instructor</small>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+<script src="{% static 'js/script.js' %}" defer></script>
+{% endblock %}
